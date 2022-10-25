@@ -201,6 +201,16 @@ void convert_argument(char argument[], int length) {
     }
 }
 
+
+/* returns 1 if character is an alias for given number, 0 if it's not */
+int does_match(int number, char character) {
+    for (int i = 0; aliases[number][i] != '\0'; i++)
+        if (aliases[number][i] == character) {
+            return 1;
+        }
+    return 0;
+}
+
 /*
 int search(char argument[], int matching_contacts) {
     / returns index of a line *
