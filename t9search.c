@@ -4,6 +4,22 @@
 **    251301    **
 *****************/
 
+#define DEBUG 0
+#if DEBUG
+
+/* logs plain string */
+#define log(msg) fprintf(stderr, __FILE__ ":%03d: " msg "\n", __LINE__)
+/* logs variable(s) */
+#define logv(msg, ...) fprintf(stderr, __FILE__ ":%03d: " msg "\n", \
+                               __LINE__, __VA_ARGS__)
+
+#else
+
+#define log(msg) {}
+#define logv(msg, ...) {}
+
+#endif
+
 #include <stdio.h>
 
 #define LINE_LENGTH 100
