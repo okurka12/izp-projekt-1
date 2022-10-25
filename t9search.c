@@ -4,7 +4,7 @@
 **    251301    **
 *****************/
 
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
 
 /* logs plain string */
@@ -194,21 +194,41 @@ char digit_to_number(char digit) {
 }
 
 
-/* in-place converts digit array to number array */
+/* in-place converts digit array to -1 terminated number array */
 void convert_argument(char argument[], int length) {
-    for (int i = 0; i < length; i++) {
+    int i;
+    for (i = 0; i < length; i++) {
         argument[i] = digit_to_number(argument[i]);
     }
 }
 
 
-/* returns 1 if character is an alias for given number, 0 if it's not */
+/* returns 1 if character is an alias for given number, 0 if it's not, 
+case-insensitive */
 int does_match(int number, char character) {
+    logv("does_match called witch n=%d, ch=%c", number, character);
     for (int i = 0; aliases[number][i] != '\0'; i++)
-        if (aliases[number][i] == character) {
+        if (aliases[number][i] == lowercase(character)) {
             return 1;
         }
     return 0;
+}
+
+
+/* returns 1 if given string matches pattern (signed char numbers, NOT ASCII 
+digits), ignores whitespaces, string must not be shorter than pattern */
+int matches_pattern(char pattern[], char string[]) {
+    int offset = 0;
+    for (int i = 0; pattern[i] != -1; i++) {
+        while (is_white(string[i + offset])) {
+            offset++;
+        }
+        if (!does_match(pattern[i], string[i + offset])) {
+            return 0;
+        }
+    }
+    return 1;
+
 }
 
 /*
@@ -216,6 +236,17 @@ int search(char argument[], int matching_contacts) {
     / returns index of a line *
 }
 */
+
+void demo() {
+    char pattern1[] = {7, 3, 7, 2, -1};
+    printf("xxx1 matches pattern %d\n", matches_pattern(pattern1, "pepa"));
+    char pattern2[] = {6, 4, 5, 2, 6, -1};
+    printf("xxx2 matches pattern %d\n", matches_pattern(pattern2, "mi \n  lan"));
+    char pattern3[] = {7, 8, 3, 7, 2, 6, -1};
+    printf("xxx3 matches pattern %d\n", matches_pattern(pattern3, "StepAn"));
+}
+
+
 
 int main(int argc, char *argv[]) {
 
@@ -231,6 +262,8 @@ int main(int argc, char *argv[]) {
     annul_lines();
     load_lines();
     print_lines();
+
+    demo();
 
     return 0;
 }
