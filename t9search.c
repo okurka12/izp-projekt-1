@@ -45,14 +45,14 @@ char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1];
 
 //todo: at znak 0 reprezentuje znak +
 
+/* makes a letter lowercase or returns as is */
 char lowercase(char letter) {
-    /* makes a letter lowercase or returns as is */
     return letter + (letter >= 'A' && letter <= 'Z') * ('a' - 'A');
 }
 
 
+/* checks if a character is white */
 int is_white(char character) {
-    /* checks if a character is white */
     char whites[] = {
         ' ',
         '\n',  // line-feed
@@ -70,8 +70,8 @@ int is_white(char character) {
 }
 
 
+/* checks if a string consists of only whitespace characters */
 int is_all_whitespace(char str[]) {
-    /* checks if a string consists of only whitespace characters */
     char c; 
     for (int i = 0; str[i] != '\0'; i++) {
         c = str[i];
@@ -83,17 +83,17 @@ int is_all_whitespace(char str[]) {
 } 
 
 
+/* makes first character of each line null */
 void annul_lines() {
-    /* makes first character of each line null */
     for (int i = 0; i < CONTACT_COUNT * 2; i++) {
         lines[i][0] = '\0';
     }
 }
 
 
+/* loads one line to the specified position in "lines" array, 
+returns 0 on succes, returns EOF on EOF */
 int load_line(int index) {
-    /* loads one line to the specified position in "lines" array, 
-       returns 0 on succes, returns EOF on EOF */
 
     int i = 0;
     int done = 0;
@@ -137,9 +137,9 @@ int load_line(int index) {
 }
 
 
+/* repeatedly calls load_line()
+until CONTACT_COUNT limit or EOF is reached */
 void load_lines() {
-    /* repeatedly calls load_line() 
-       until CONTACT_COUNT limit or EOF is reached */
     int i = 0;
     while (i < CONTACT_COUNT * 2) {
         if (load_line(i) == EOF) {
@@ -167,9 +167,9 @@ void print_lines() {
 }
 
 
+/* checks if input string is only digits, 
+if thats the case, returns 0, else 1  */
 int check_input(char input[]) {
-    /* checks if input string is only digits, 
-    if thats the case, returns 0, else 1  */
     for (int i = 0; input[i] != '\0'; i++) {
         if (!(input[i] >= '0' && input[i] <= '9')) {
             return 1;
@@ -179,33 +179,33 @@ int check_input(char input[]) {
 }
 
 
+/* returns the number of characters not counting null at the end */
 int string_length(char string[]) {
-    /* returns the number of characters not counting null at the end */
     int i;
     for (i = 0; string[i] != '\0'; i++) {}
     return i;
 }
 
 
+/* converts ascii digit to a number, 
+which it returns in the form of signed char */
 char digit_to_number(char digit) {
-    /* converts ascii digit to a number, 
-       which it returns in the form of signed char */
     return digit - '0';
 }
 
 
+/* in-place converts digit array to number array */
 void convert_argument(char argument[], int length) {
-    /* in-place converts digit array to number array */
     for (int i = 0; i < length; i++) {
         argument[i] = digit_to_number(argument[i]);
     }
 }
 
-
+/*
 int search(char argument[], int matching_contacts) {
-    /* returns index of a line */
+    / returns index of a line *
 }
-
+*/
 
 int main(int argc, char *argv[]) {
 
