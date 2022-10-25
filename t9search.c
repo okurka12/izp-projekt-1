@@ -4,7 +4,7 @@
 **    251301    **
 *****************/
 
-#define DEBUG 1
+#define DEBUG 0
 #if DEBUG
 
 /* logs plain string */
@@ -215,8 +215,9 @@ int does_match(int number, char character) {
 }
 
 
-/* returns 1 if given string matches pattern (signed char numbers, NOT ASCII 
-digits), ignores whitespaces, string must not be shorter than pattern */
+/* returns 1 if given string matches pattern (-1 terminated signed char 
+numbers, NOT ASCII digits), ignores whitespaces, 
+string must not be shorter than pattern */
 int matches_pattern(char pattern[], char string[]) {
     int offset = 0;
     for (int i = 0; pattern[i] != -1; i++) {
@@ -231,6 +232,29 @@ int matches_pattern(char pattern[], char string[]) {
 
 }
 
+
+
+/* returns length of a pattern (-1 terminated array of chars) */
+int pattern_length(char pattern[]) {
+    int i;
+    for (i = 0; pattern[i] != -1; i++) {}
+    return i;
+}
+
+
+/* checks if given pattern (-1 terminated signed char numbers) is anywhere 
+in the string */
+int pattern_in(char pattern[], char string[]) {
+    int str_len = string_length(string);
+    int pat_len = pattern_length(pattern);
+    for (int i = 0; i < str_len - pat_len; i++) {
+        if (matches_pattern(pattern, string + i)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 /*
 int search(char argument[], int matching_contacts) {
     / returns index of a line *
@@ -239,11 +263,22 @@ int search(char argument[], int matching_contacts) {
 
 void demo() {
     char pattern1[] = {7, 3, 7, 2, -1};
-    printf("xxx1 matches pattern %d\n", matches_pattern(pattern1, "pepa"));
+    printf("xxx1 matches pattern %d\n", 
+           matches_pattern(pattern1, "pepa"));
     char pattern2[] = {6, 4, 5, 2, 6, -1};
-    printf("xxx2 matches pattern %d\n", matches_pattern(pattern2, "mi \n  lan"));
+    printf("xxx2 matches pattern %d\n", 
+           matches_pattern(pattern2, "mi \n  lan"));
     char pattern3[] = {7, 8, 3, 7, 2, 6, -1};
-    printf("xxx3 matches pattern %d\n", matches_pattern(pattern3, "StepAn"));
+    printf("xxx3 matches pattern %d\n", 
+           matches_pattern(pattern3, "StepAn"));
+
+    printf("xxx4 pattern in %d\n", 
+           pattern_in(pattern1, "Sel Pepa zalit kytky"));
+    printf("xxx5 pattern in %d\n", 
+           pattern_in(pattern2, "usporadej mi lan party"));
+    printf("xxx6 pattern in %d\n", 
+           pattern_in(pattern3, "to je krasny den, rekl stepan, kdyz to zrel"));
+           
 }
 
 
