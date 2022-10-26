@@ -21,8 +21,8 @@ hlupak hloupy
 mnam mnam
 898 787
 
-kontakt8
-cislo8
+mamka 
+cislo mamky
 kontakt9
 cislo9
 kontakt10

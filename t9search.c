@@ -237,7 +237,7 @@ in the string */
 int pattern_in(char pattern[], char string[]) {
     int str_len = string_length(string);
     int pat_len = pattern_length(pattern);
-    for (int i = 0; i < str_len - pat_len; i++) {
+    for (int i = 0; i < str_len - pat_len + 1; i++) {
         if (matches_pattern(pattern, string + i)) {
             return 1;
         }
