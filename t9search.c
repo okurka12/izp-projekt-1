@@ -26,20 +26,18 @@
 #define CONTACT_COUNT 42
 
 const char *aliases[] = {
-    "+",     // 0
-    "",      // 1
-    "abc",   // 2
-    "def",   // 3
-    "ghi",   // 4
-    "jkl",   // 5
-    "mno",   // 6
-    "pqrs",  // 7
-    "tuv",   // 8
-    "wxyz"   // 9
+    "0+",     // 0
+    "1",      // 1
+    "2abc",   // 2
+    "3def",   // 3
+    "4ghi",   // 4
+    "5jkl",   // 5
+    "6mno",   // 6
+    "7pqrs",  // 7
+    "8tuv",   // 8
+    "9wxyz"   // 9
 };
 
-/* LINE_LENGTH + 1 for the last null character */
-char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1];
 
 
 
@@ -84,7 +82,7 @@ int is_all_whitespace(char str[]) {
 
 
 /* makes first character of each line null */
-void annul_lines() {
+void annul_lines(char *lines[]) {
     for (int i = 0; i < CONTACT_COUNT * 2; i++) {
         lines[i][0] = '\0';
     }
@@ -93,7 +91,7 @@ void annul_lines() {
 
 /* loads one line to the specified position in "lines" array, 
 returns 0 on succes, returns EOF on EOF */
-int load_line(int index) {
+int load_line(int index, char *lines[]) {
 
     int i = 0;
     int done = 0;
@@ -139,10 +137,10 @@ int load_line(int index) {
 
 /* repeatedly calls load_line()
 until CONTACT_COUNT limit or EOF is reached */
-void load_lines() {
+void load_lines(char *lines[]) {
     int i = 0;
     while (i < CONTACT_COUNT * 2) {
-        if (load_line(i) == EOF) {
+        if (load_line(i, lines) == EOF) {
             return;
         }
         if (!(is_all_whitespace(lines[i]))) {
@@ -152,7 +150,7 @@ void load_lines() {
 }
 
 
-void print_line(int index) {
+void print_line(int index, char *lines[]) {
     if (lines[index][0] != '\0') {
         printf("line %d - \"%s\"\n", index, lines[index]);
     }
@@ -160,9 +158,9 @@ void print_line(int index) {
 }
 
 
-void print_lines() {
+void print_lines(char *lines[]) {
     for (int i = 0; i < CONTACT_COUNT * 2; i++) {
-        print_line(i);
+        print_line(i, lines);
     }
 }
 
@@ -194,12 +192,13 @@ char digit_to_number(char digit) {
 }
 
 
-/* in-place converts digit array to -1 terminated number array */
-void convert_argument(char argument[], int length) {
+/* in-place converts digit string to -1 terminated number array */
+void convert_argument(char argument[]) {
     int i;
-    for (i = 0; i < length; i++) {
+    for (i = 0; argument[i] != '\0'; i++) {
         argument[i] = digit_to_number(argument[i]);
     }
+    argument[i] = -1;
 }
 
 
@@ -255,11 +254,12 @@ int pattern_in(char pattern[], char string[]) {
     return 0;
 }
 
-/*
-int search(char argument[], int matching_contacts) {
-    / returns index of a line *
+
+/* loads indices of matching lines */
+int search(char pattern[], int matches[]) {
+    // to be done later
 }
-*/
+
 
 void demo() {
     char pattern1[] = {7, 3, 7, 2, -1};
@@ -294,11 +294,18 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    annul_lines();
-    load_lines();
-    print_lines();
+    /* LINE_LENGTH + 1 for the last null character */
+    char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1];
+    annul_lines(lines);
+    load_lines(lines);
+    print_lines(lines);
 
-    demo();
+    convert_argument(argv[1]);
+    int matches[CONTACT_COUNT * 2];
+
+    if (DEBUG) {
+        demo();
+    }
 
     return 0;
 }
