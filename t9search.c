@@ -257,6 +257,7 @@ int search(char pattern[],
     int match_count = 0;
     for (int i = 0; i < CONTACT_COUNT * 2; i++) {
         if (pattern_in(pattern, lines[i])) {
+            logv("pattern in lines[%d] - %s", i, lines[i]);
             matching_lines[match_count] = i;
             match_count++;
         }
@@ -303,10 +304,10 @@ void output(int matching_lines[],
     int matching_contacts[CONTACT_COUNT * 2];
     set_int_array(matching_contacts, -1, CONTACT_COUNT * 2);
     for (int i = 0; matching_lines[i] != -1; i++) {
-        if (i % 2 == 0) {  // matched line is name
-            matching_contacts[i] = i;
-        } else {  // matched line is phone number
-            matching_contacts[i] = i - 1;
+        if (matching_lines[i] % 2 == 0) {  // matched line is name
+            matching_contacts[i] = matching_lines[i];
+        } else {                           // matched line is phone number
+            matching_contacts[i] = matching_lines[i] - 1;
         }
     }
     remove_duplicates(matching_contacts, CONTACT_COUNT *2, -1);
@@ -322,6 +323,17 @@ void output(int matching_lines[],
 
 void demo(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
     log_lines(lines);
+
+    log("demo convert_argument");
+    char arg[] = "1234567890";
+    for (int i = 0; i < 10; i++) {
+        logv("\t%c", arg[i]);
+    }
+    log("\t---");
+    convert_argument(arg);
+    for (int i = 0; i < 10; i++) {
+        logv("\t%d", arg[i]);
+    }
 
     char pattern1[] = {7, 3, 7, 2, -1};
     logv("xxx1 matches pattern %d\n", 
@@ -342,10 +354,14 @@ void demo(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
 
     int array[] = {4, 4, 6, 3, 5, 1, 8, 8, 3, 7};
     log("xxx7 remove duplicates\n");
-    fprintf(stderr, "\t4, 4, 6, 3, 5, 1, 8, 8, 3, 7, \n\t");
-    remove_duplicates(array, 10, -1);
+
     for (int i = 0; i < 10; i++) {
-        fprintf(stderr, "%d, ", array[i]);
+        logv("\t%d", array[i]);
+    }
+    remove_duplicates(array, 10, -1);
+    log("\t---");
+    for (int i = 0; i < 10; i++) {
+        logv("\t%d", array[i]);
     }
     fprintf(stderr, "\n");
            
@@ -355,6 +371,7 @@ void demo(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
 
 
 int main(int argc, char *argv[]) {
+    log("starting program");
 
     if (argc > 2) {
         fprintf(stderr, "Too many arguments: %d\n", argc);
@@ -369,12 +386,19 @@ int main(int argc, char *argv[]) {
     char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1];
     annul_lines(lines);
     load_lines(lines);
+    logv("lines[0] %s", lines[0]);
+    
+    if (DEBUG) {
+        log("calling demo()");
+        demo(lines);
+    }
     if (argc == 1) {
         for (int i = 0; i < CONTACT_COUNT * 2; i += 2) {
             print_contact(i, lines);
         }
         return 0;
     }
+    logv("inputted pattern: %s", argv[1]);
 
     log("calling convert_argument");
     convert_argument(argv[1]);
@@ -386,10 +410,6 @@ int main(int argc, char *argv[]) {
     search(argv[1], matching_lines, lines);
     output(matching_lines, lines);
 
-    if (DEBUG) {
-        log("calling demo()");
-        demo(lines);
-    }
 
     return 0;
 }
