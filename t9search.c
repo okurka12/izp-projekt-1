@@ -4,7 +4,7 @@
 **    251301    **
 *****************/
 
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
 
 /* logs plain string */
@@ -22,9 +22,21 @@
 
 #include <stdio.h>
 
-/* program constants (note, aliases can be redefined in "does_match" fn) */
+/* program constants */
 #define LINE_LENGTH 100
 #define CONTACT_COUNT 42
+const char *aliases[] = {
+    "0+",     // 0
+    "1",      // 1
+    "2abc",   // 2
+    "3def",   // 3
+    "4ghi",   // 4
+    "5jkl",   // 5
+    "6mno",   // 6
+    "7pqrs",  // 7
+    "8tuv",   // 8
+    "9wxyz"   // 9
+};
 
 
 /* makes a letter lowercase or returns as is */
@@ -134,17 +146,17 @@ void load_lines(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
 }
 
 
-void print_line(int index, char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
+void log_line(int index, char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
     if (lines[index][0] != '\0') {
-        printf("line %d - \"%s\"\n", index, lines[index]);
+        logv("line %d - \"%s\"\n", index, lines[index]);
     }
 
 }
 
 
-void print_lines(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
+void log_lines(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
     for (int i = 0; i < CONTACT_COUNT * 2; i++) {
-        print_line(i, lines);
+        log_line(i, lines);
     }
 }
 
@@ -189,20 +201,6 @@ void convert_argument(char argument[]) {
 /* returns 1 if character is an alias for given number, 0 if it's not, 
 case-insensitive */
 int does_match(int number, char character) {
-    const char *aliases[] = {
-        "0+",     // 0
-        "1",      // 1
-        "2abc",   // 2
-        "3def",   // 3
-        "4ghi",   // 4
-        "5jkl",   // 5
-        "6mno",   // 6
-        "7pqrs",  // 7
-        "8tuv",   // 8
-        "9wxyz"   // 9
-    };
-
-    logv("does_match called witch n=%d, ch=%c", number, character);
     for (int i = 0; aliases[number][i] != '\0'; i++)
         if (aliases[number][i] == lowercase(character)) {
             return 1;
@@ -252,31 +250,107 @@ int pattern_in(char pattern[], char string[]) {
 }
 
 
-/* loads indices of matching lines */
-int search(char pattern[], int matches[]) {
-    // to be done later
+/* loads indices of matching lines, returns match count */
+int search(char pattern[], 
+           int matching_lines[], 
+           char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
+    int match_count = 0;
+    for (int i = 0; i < CONTACT_COUNT * 2; i++) {
+        if (pattern_in(pattern, lines[i])) {
+            matching_lines[match_count] = i;
+            match_count++;
+        }
+    }
+    return match_count;
 }
 
 
-void demo() {
+/* removes duplicates in int array by setting them to given value */
+void remove_duplicates(int array[], int array_length, int value) {
+    for (int i = 0; i < array_length; i++) {
+        if (array[i] != value) {
+            for (int j = i + 1; j < array_length; j++) {
+                if (array[j] == array[i]) {
+                    array[j] = value;
+                }
+            }
+        }
+    }
+}
+
+/* prints one contact */
+void print_contact(int index, char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
+    logv("print_contact called with index %d", index);
+    if (index % 2 != 0) {
+        index -= 1;
+    }
+    if (lines[index][0] != '\0') {
+        printf("%s, %s\n", lines[index], lines[index + 1]);
+    }
+}
+
+/* in-place sets all elements of int array to given value */
+void set_int_array(int array[], int value, int array_length) {
+    for (int i = 0; i < array_length; i++) {
+        array[i] = value;
+    }
+}
+
+
+/* outputs discrete matching contacts based on matching line indices */
+void output(int matching_lines[], 
+            char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
+    int matching_contacts[CONTACT_COUNT * 2];
+    set_int_array(matching_contacts, -1, CONTACT_COUNT * 2);
+    for (int i = 0; matching_lines[i] != -1; i++) {
+        if (i % 2 == 0) {  // matched line is name
+            matching_contacts[i] = i;
+        } else {  // matched line is phone number
+            matching_contacts[i] = i - 1;
+        }
+    }
+    remove_duplicates(matching_contacts, CONTACT_COUNT *2, -1);
+    for (int i = 0; i < CONTACT_COUNT * 2; i++) {
+        if (matching_contacts[i] != -1) {
+            print_contact(matching_contacts[i], lines);
+        }
+    }
+}
+
+
+
+
+void demo(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
+    log_lines(lines);
+
     char pattern1[] = {7, 3, 7, 2, -1};
-    printf("xxx1 matches pattern %d\n", 
+    logv("xxx1 matches pattern %d\n", 
            matches_pattern(pattern1, "pepa"));
     char pattern2[] = {6, 4, 5, 2, 6, -1};
-    printf("xxx2 matches pattern %d\n", 
+    logv("xxx2 matches pattern %d\n", 
            matches_pattern(pattern2, "mi \n  lan"));
     char pattern3[] = {7, 8, 3, 7, 2, 6, -1};
-    printf("xxx3 matches pattern %d\n", 
+    logv("xxx3 matches pattern %d\n", 
            matches_pattern(pattern3, "StepAn"));
 
-    printf("xxx4 pattern in %d\n", 
+    logv("xxx4 pattern in %d\n", 
            pattern_in(pattern1, "Sel Pepa zalit kytky"));
-    printf("xxx5 pattern in %d\n", 
+    logv("xxx5 pattern in %d\n", 
            pattern_in(pattern2, "usporadej mi lan party"));
-    printf("xxx6 pattern in %d\n", 
-           pattern_in(pattern3, "to je krasny den, rekl stepan, kdyz to zrel"));
+    logv("xxx6 pattern in %d\n", 
+           pattern_in(pattern3, "krasny den, rekl stepan, kdyz to zrel"));
+
+    int array[] = {4, 4, 6, 3, 5, 1, 8, 8, 3, 7};
+    log("xxx7 remove duplicates\n");
+    fprintf(stderr, "\t4, 4, 6, 3, 5, 1, 8, 8, 3, 7, \n\t");
+    remove_duplicates(array, 10, -1);
+    for (int i = 0; i < 10; i++) {
+        fprintf(stderr, "%d, ", array[i]);
+    }
+    fprintf(stderr, "\n");
            
 }
+
 
 
 
@@ -295,13 +369,26 @@ int main(int argc, char *argv[]) {
     char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1];
     annul_lines(lines);
     load_lines(lines);
-    print_lines(lines);
+    if (argc == 1) {
+        for (int i = 0; i < CONTACT_COUNT * 2; i += 2) {
+            print_contact(i, lines);
+        }
+        return 0;
+    }
 
+    log("calling convert_argument");
     convert_argument(argv[1]);
-    int matches[CONTACT_COUNT * 2];
+
+    log("declaring matching_lines array");
+    int matching_lines[CONTACT_COUNT * 2];
+    set_int_array(matching_lines, -1, CONTACT_COUNT * 2);
+
+    search(argv[1], matching_lines, lines);
+    output(matching_lines, lines);
 
     if (DEBUG) {
-        demo();
+        log("calling demo()");
+        demo(lines);
     }
 
     return 0;

@@ -19,4 +19,9 @@ int main() {
             break;
         }
     }   
+
+    int policko[16];
+    for (int i = 0; i < 16; i++) {
+        printf("i = %d policko[i] = %d\n", i, policko[i]);
+    }
 }
