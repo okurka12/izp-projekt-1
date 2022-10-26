@@ -317,6 +317,8 @@ void output(int matching_lines[],
 }
 
 
+/* constants and function calls to test various parts of this code,
+development only, DEBUG has to be 1 */
 void demo(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
     log_lines(lines);
 
@@ -370,8 +372,6 @@ void demo(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
 }
 
 
-
-
 int main(int argc, char *argv[]) {
     log("starting program");
 
@@ -409,7 +409,9 @@ int main(int argc, char *argv[]) {
     int matching_lines[CONTACT_COUNT * 2];
     set_int_array(matching_lines, -1, CONTACT_COUNT * 2);
 
-    search(argv[1], matching_lines, lines);
+     if (search(argv[1], matching_lines, lines) == 0) {
+        printf("Not found\n");
+     }
     output(matching_lines, lines);
 
 
