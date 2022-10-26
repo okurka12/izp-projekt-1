@@ -4,7 +4,7 @@
 **    251301    **
 *****************/
 
-#define DEBUG 1
+#define DEBUG 0
 #if DEBUG
 
 /* logs plain string */
@@ -351,6 +351,12 @@ void demo(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
            pattern_in(pattern2, "usporadej mi lan party"));
     logv("xxx6 pattern in %d\n", 
            pattern_in(pattern3, "krasny den, rekl stepan, kdyz to zrel"));
+    
+    /* so that compiler warnings are omitted */
+    if (!DEBUG) {
+        int a = pattern1[0] = pattern2[0] = pattern3[0];
+        if (a) {}
+    }
 
     int array[] = {4, 4, 6, 3, 5, 1, 8, 8, 3, 7};
     log("xxx7 remove duplicates\n");
