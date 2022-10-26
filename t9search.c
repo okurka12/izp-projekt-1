@@ -5,25 +5,22 @@
 *****************/
 
 #define DEBUG 0
+
 #if DEBUG
-
-/* logs plain string */
-#define log(msg) fprintf(stderr, __FILE__ ":%03d: " msg "\n", __LINE__)
-/* logs variable(s) */
-#define logv(msg, ...) fprintf(stderr, __FILE__ ":%03d: " msg "\n", \
-                               __LINE__, __VA_ARGS__)
-
+    /* logs plain string */
+    #define log(msg) fprintf(stderr, __FILE__ ":%03d: " msg "\n", __LINE__)
+    /* logs variable(s) */
+    #define logv(msg, ...) fprintf(stderr, __FILE__ ":%03d: " msg "\n", \
+                                   __LINE__, __VA_ARGS__)
 #else
-
-#define log(msg) {}
-#define logv(msg, ...) {}
-
+    #define log(msg) {}
+    #define logv(msg, ...) {}
 #endif
 
 #include <stdio.h>
 
 /* program constants */
-#define LINE_LENGTH 100
+#define LINE_LENGTH 100  // content above line length that will be stripped
 #define CONTACT_COUNT 42
 const char *aliases[] = {
     "0+",     // 0
@@ -227,7 +224,6 @@ int matches_pattern(char pattern[], char string[]) {
 }
 
 
-
 /* returns length of a pattern (-1 terminated array of chars) */
 int pattern_length(char pattern[]) {
     int i;
@@ -279,6 +275,7 @@ void remove_duplicates(int array[], int array_length, int value) {
     }
 }
 
+
 /* prints one contact */
 void print_contact(int index, char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
     logv("print_contact called with index %d", index);
@@ -289,6 +286,7 @@ void print_contact(int index, char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
         printf("%s, %s\n", lines[index], lines[index + 1]);
     }
 }
+
 
 /* in-place sets all elements of int array to given value */
 void set_int_array(int array[], int value, int array_length) {
@@ -317,8 +315,6 @@ void output(int matching_lines[],
         }
     }
 }
-
-
 
 
 void demo(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
