@@ -22,26 +22,10 @@
 
 #include <stdio.h>
 
+/* program constants (note, aliases can be redefined in "does_match" fn) */
 #define LINE_LENGTH 100
 #define CONTACT_COUNT 42
 
-const char *aliases[] = {
-    "0+",     // 0
-    "1",      // 1
-    "2abc",   // 2
-    "3def",   // 3
-    "4ghi",   // 4
-    "5jkl",   // 5
-    "6mno",   // 6
-    "7pqrs",  // 7
-    "8tuv",   // 8
-    "9wxyz"   // 9
-};
-
-
-
-
-//todo: at znak 0 reprezentuje znak +
 
 /* makes a letter lowercase or returns as is */
 char lowercase(char letter) {
@@ -82,7 +66,7 @@ int is_all_whitespace(char str[]) {
 
 
 /* makes first character of each line null */
-void annul_lines(char *lines[]) {
+void annul_lines(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
     for (int i = 0; i < CONTACT_COUNT * 2; i++) {
         lines[i][0] = '\0';
     }
@@ -91,7 +75,7 @@ void annul_lines(char *lines[]) {
 
 /* loads one line to the specified position in "lines" array, 
 returns 0 on succes, returns EOF on EOF */
-int load_line(int index, char *lines[]) {
+int load_line(int index, char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
 
     int i = 0;
     int done = 0;
@@ -137,7 +121,7 @@ int load_line(int index, char *lines[]) {
 
 /* repeatedly calls load_line()
 until CONTACT_COUNT limit or EOF is reached */
-void load_lines(char *lines[]) {
+void load_lines(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
     int i = 0;
     while (i < CONTACT_COUNT * 2) {
         if (load_line(i, lines) == EOF) {
@@ -150,7 +134,7 @@ void load_lines(char *lines[]) {
 }
 
 
-void print_line(int index, char *lines[]) {
+void print_line(int index, char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
     if (lines[index][0] != '\0') {
         printf("line %d - \"%s\"\n", index, lines[index]);
     }
@@ -158,7 +142,7 @@ void print_line(int index, char *lines[]) {
 }
 
 
-void print_lines(char *lines[]) {
+void print_lines(char lines[CONTACT_COUNT * 2][LINE_LENGTH + 1]) {
     for (int i = 0; i < CONTACT_COUNT * 2; i++) {
         print_line(i, lines);
     }
@@ -205,6 +189,19 @@ void convert_argument(char argument[]) {
 /* returns 1 if character is an alias for given number, 0 if it's not, 
 case-insensitive */
 int does_match(int number, char character) {
+    const char *aliases[] = {
+        "0+",     // 0
+        "1",      // 1
+        "2abc",   // 2
+        "3def",   // 3
+        "4ghi",   // 4
+        "5jkl",   // 5
+        "6mno",   // 6
+        "7pqrs",  // 7
+        "8tuv",   // 8
+        "9wxyz"   // 9
+    };
+
     logv("does_match called witch n=%d, ch=%c", number, character);
     for (int i = 0; aliases[number][i] != '\0'; i++)
         if (aliases[number][i] == lowercase(character)) {
